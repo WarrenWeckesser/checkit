@@ -10,50 +10,48 @@
 #include <typeinfo>
 #include <iomanip>
 
-using namespace std;
-
 
 class CheckIt {
 
     int num_assertions{0};
     int num_failed{0};
-    ostream& errfile;
+    std::ostream& errfile;
 
 public:
 
-    CheckIt(ostream &errfile) : errfile(errfile) {}
+    CheckIt(std::ostream &errfile) : errfile(errfile) {}
 
-    int fprint_summary(ostream& out, const string& label)
+    int fprint_summary(std::ostream& out, const std::string& label)
     {
         out << label;
-        out << "Assertions: " << num_assertions << "    Failures: " << num_failed << endl;
+        out << "Assertions: " << num_assertions << "    Failures: " << num_failed << std::endl;
         return num_failed > 0;
     }
 
-    int print_summary(const string& label)
+    int print_summary(const std::string& label)
     {
-        return fprint_summary(cerr, label);
+        return fprint_summary(std::cerr, label);
     }
 
     int print_summary(void)
     {
-        return fprint_summary(cerr, "");
+        return fprint_summary(std::cerr, "");
     }
 
-    void log_failure(const string &details, const char* filename, int linenumber,
-                     const string& msg)
+    void log_failure(const std::string &details, const char* filename, int linenumber,
+                     const std::string& msg)
     {
         errfile << "* failure:  " << details << "\n";
         errfile << "  location: " << filename << ":" << linenumber << "\n";
-        errfile << "  message:  " << msg << endl;
+        errfile << "  message:  " << msg << std::endl;
     }
 
-    void assert_true(int value, const string& msg, const char *filename, int linenumber)
+    void assert_true(int value, const std::string& msg, const char *filename, int linenumber)
     {
         num_assertions += 1;
         if (!value) {
             num_failed += 1;
-            ostringstream ss;
+            std::ostringstream ss;
             ss << "value is not true: " << value;
             auto details = ss.str();
             log_failure(details, filename, linenumber, msg);
@@ -63,14 +61,14 @@ public:
     // Floating point comparison
     template<typename FP>
     void assert_equal_fp(FP value1, FP value2,
-                         const string& msg, const char *filename, int linenumber)
+                         const std::string& msg, const char *filename, int linenumber)
     {
         num_assertions += 1;
         if (value1 != value2) {
             num_failed += 1;
-            ostringstream ss;
+            std::ostringstream ss;
             ss << "floating point (type " << typeid(FP).name() << ") not equal: "
-               << setprecision(numeric_limits<FP>::max_digits10)
+               << std::setprecision(std::numeric_limits<FP>::max_digits10)
                << value1 << " ≠ " << value2;
             auto details = ss.str();
             log_failure(details, filename, linenumber, msg);
@@ -80,12 +78,12 @@ public:
     // Integer comparision
     template<typename Integer>
     void assert_equal_integer(Integer value1, Integer value2,
-                              const string& msg, const char *filename, int linenumber)
+                              const std::string& msg, const char *filename, int linenumber)
     {
         num_assertions += 1;
         if (value1 != value2) {
             num_failed += 1;
-            ostringstream ss;
+            std::ostringstream ss;
             ss << "integers not equal: " << value1 << " ≠ " << value2;
             auto details = ss.str();
             log_failure(details, filename, linenumber, msg);
@@ -93,12 +91,12 @@ public:
     }
 
     void assert_equal_char(char value1, char value2,
-                           const string& msg, const char *filename, int linenumber)
+                           const std::string& msg, const char *filename, int linenumber)
     {
         num_assertions += 1;
         if (value1 != value2) {
             num_failed += 1;
-            ostringstream ss;
+            std::ostringstream ss;
             ss << "chars not equal: '" << value1 << "' ≠ '" << value2 << "'";
             auto details = ss.str();
             log_failure(details, filename, linenumber, msg);
@@ -106,7 +104,7 @@ public:
     }
 
     void assert_equal_pointer(void *value1, void *value2,
-                              const string& msg, const char *filename, int linenumber)
+                              const std::string& msg, const char *filename, int linenumber)
     {
         num_assertions += 1;
         if (value1 != value2) {
@@ -117,12 +115,12 @@ public:
     }
 
     void assert_equal_cstr(const char *value1, const char *value2,
-                           const string& msg, const char *filename, int linenumber)
+                           const std::string& msg, const char *filename, int linenumber)
     {
         num_assertions += 1;
         if (strcmp(value1, value2) != 0) {
             num_failed += 1;
-            ostringstream ss;
+            std::ostringstream ss;
             ss << "cstr values not equal: '" << value1 << "' ≠ '" << value2 << "'";
             auto details = ss.str();
             log_failure(details, filename, linenumber, msg);

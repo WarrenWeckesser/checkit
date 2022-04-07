@@ -1,5 +1,4 @@
-#include <iostream>
-#include <cstdio>
+
 #include <cstdint>
 #include "checkit.h"
 
@@ -15,7 +14,7 @@ int main(void)
     long long t = 349898923843L;
     char c = 'X';
 
-    CheckIt test = CheckIt(cerr);
+    CheckIt test = CheckIt(std::cerr);
 
     check_true(test, 1, "should be true");
     check_true(test, 0, "intentional fail");
