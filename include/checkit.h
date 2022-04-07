@@ -75,7 +75,7 @@ public:
         }
     }
 
-    // Integer comparision
+    // Integer comparison
     template<typename Integer>
     void assert_equal_integer(Integer value1, Integer value2,
                               const std::string& msg, const char *filename, int linenumber)
