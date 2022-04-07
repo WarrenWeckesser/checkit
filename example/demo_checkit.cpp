@@ -25,6 +25,8 @@ int main(void)
     check_equal_fp(test, x, 3.1f, "another intentional failure");
     check_equal_fp(test, z, 99.25, "one more");
     check_equal_fp(test, third, 1 - 2.0/3.0, "expect to fail");
+    check_close_fp(test, third, 1 - 2.0/3.0, 1.5e-17, "expect to fail");
+    check_close_fp(test, third, 1 - 2.0/3.0, 5e-16, "should pass");
     check_equal_fp(test, r, 9.87e32L, "a long double check");
 
     check_equal_integer(test, u, (uint16_t) 2300, "failed uint16_t check");
@@ -32,6 +34,8 @@ int main(void)
     check_equal_integer(test, t, -1LL, "should fail");
 
     check_equal_char(test, c, 'Z', "should fail");
+
+
 
     return test.print_summary("SUMMARY: ");
 }

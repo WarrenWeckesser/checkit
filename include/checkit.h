@@ -38,6 +38,7 @@ OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <limits>
 #include <typeinfo>
 #include <iomanip>
+#include <cmath>
 
 
 class CheckIt {
@@ -87,7 +88,7 @@ public:
         }
     }
 
-    // Floating point comparison
+    // Floating point equality comparison
     template<typename FP>
     void assert_equal_fp(FP value1, FP value2,
                          const std::string& msg, const char *filename, int linenumber)
@@ -99,6 +100,32 @@ public:
             ss << "floating point (type " << typeid(FP).name() << ") not equal: "
                << std::setprecision(std::numeric_limits<FP>::max_digits10)
                << value1 << " ≠ " << value2;
+            auto details = ss.str();
+            log_failure(details, filename, linenumber, msg);
+        }
+    }
+
+    // Floating point comparison based on allowed relative error.
+    //
+    // In this check, the second argument is the expected value.  This value is
+    // considered the "true" value, and the test passes if the relative error of
+    // `value` is less than or equal to the given tolerance.
+    //
+    // Because this test is based on relative error *only*, it must not be used
+    // when the expected value is 0.
+    //
+    template<typename FP>
+    void assert_close_fp(FP value, FP expected, FP reltol,
+                         const std::string& msg, const char *filename, int linenumber)
+    {
+        num_assertions += 1;
+        FP relerr = fabs(value - expected)/fabs(expected);
+        if (relerr > reltol) {
+            num_failed += 1;
+            std::ostringstream ss;
+            ss << "floating point (type " << typeid(FP).name() << ") not close: "
+               << std::setprecision(std::numeric_limits<FP>::max_digits10)
+               << value << " ≉ " << expected << "; relerr (" << relerr << ") < reltol (" << reltol << ")";
             auto details = ss.str();
             log_failure(details, filename, linenumber, msg);
         }
@@ -162,6 +189,7 @@ public:
 #define check_equal_pointer(A, B, C, D)  A .assert_equal_pointer(B, C, D, __FILE__, __LINE__)
 #define check_equal_cstr(A, B, C, D)     A .assert_equal_cstr(B, C, D, __FILE__, __LINE__)
 #define check_equal_fp(A, B, C, D)       A .assert_equal_fp(B, C, D, __FILE__, __LINE__)
+#define check_close_fp(A, B, C, D, E)    A .assert_close_fp(B, C, D, E, __FILE__, __LINE__)
 #define check_equal_integer(A, B, C, D)  A .assert_equal_integer(B, C, D, __FILE__, __LINE__)
 #define check_equal_char(A, B, C, D)     A .assert_equal_char(B, C, D, __FILE__, __LINE__)
 
